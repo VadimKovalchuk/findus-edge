@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 
 LARGE_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 0, 'Symbol')
@@ -8,7 +10,8 @@ SMALL_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_600_companies', 3, 'Ti
 def getter(link: str, section: int, key: str):
     data = pd.read_html(link)
     table = data[section]
-    return table[key].tolist()
+    lst = table[key].to_list()
+    return json.dumps(lst)
 
 
 def get_sp500_ticker_list():
@@ -25,7 +28,7 @@ def get_sp600_ticker_list():
 
 def main():
     for link, section, key in (LARGE_CAP, MID_CAP, SMALL_CAP):
-        print(len(getter(link, section, key)))
+        print((getter(link, section, key)))
 
 
 if __name__ == '__main__':
