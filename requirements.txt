@@ -1,2 +1,2 @@
 pandas-datareader==0.9.0
-yfinance==0.1.55
+yfinance==0.1.59
