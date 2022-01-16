@@ -4,7 +4,7 @@ import yfinance
 
 from pandas import DataFrame
 
-START_DATE = '2016-01-01'
+START_DATE = '2017-01-01'
 
 
 def ticker_history(arg_dict: dict):
@@ -24,10 +24,10 @@ def ticker_history(arg_dict: dict):
     for indx in range(history.shape[0]):
         row = history.loc[indx]
         result['prices'].append((row['Date'],
-                                 row['Open'],
-                                 row['High'],
-                                 row['Low'],
-                                 row['Close'],
+                                 round(row['Open'], 2),
+                                 round(row['High'], 2),
+                                 round(row['Low'], 2),
+                                 round(row['Close'], 2),
                                  float(row['Volume'])))
         if row['Dividends']:
             result['dividends'].append((row['Date'], row['Dividends']))
@@ -37,9 +37,9 @@ def ticker_history(arg_dict: dict):
 
 
 if __name__ == '__main__':
-    #res = ticker_history({'ticker': "MSFT", 'start': '2021-03-14'})
+    res = ticker_history({'ticker': "MSFT", 'start': '2021-10-14'})
     #print(res)
-    #print(json.dumps(json.loads(res), indent=4))
-    tkr = yfinance.Ticker("MSFT")
-    print(json.dumps(tkr.get_info(), indent=4))
+    print(json.dumps(json.loads(res), indent=4))
+    #tkr = yfinance.Ticker("MSFT")
+    #print(json.dumps(tkr.get_info(), indent=4))
 
