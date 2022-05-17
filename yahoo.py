@@ -37,7 +37,7 @@ def ticker_history(arg_dict: dict):
 
 
 if __name__ == '__main__':
-    res = ticker_history({'ticker': "MSFT", 'start': '2021-10-14'})
+    res = ticker_history({"ticker": "MSFT", "start": "2022-05-10"})
     #print(res)
     print(json.dumps(json.loads(res), indent=4))
     #tkr = yfinance.Ticker("MSFT")
