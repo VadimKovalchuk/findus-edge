@@ -103,7 +103,7 @@ def fundamental_raw(ticker_list: list) -> dict:
 
 
 def fundamental(ticker_list: list) -> str:
-    return json.dumps(fundamental(ticker_list))
+    return json.dumps(fundamental_raw(ticker_list))
 
 
 def fundamental_converted(ticker_list: list):
