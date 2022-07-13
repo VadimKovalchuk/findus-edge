@@ -99,7 +99,7 @@ def fundamental_raw(ticker: str) -> dict:
 
 
 def fundamental(ticker: str) -> str:
-    return json.dumps(fundamental_raw(ticker))
+    return json.dumps({'values': fundamental_raw(ticker)})
 
 
 def fundamental_converted(ticker: str):
