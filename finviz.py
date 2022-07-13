@@ -93,39 +93,35 @@ def convert_value(raw_value: str, target_type: type) -> Union[str, int, float, N
         return type_map[target_type](raw_value)
 
 
-def fundamental_raw(ticker_list: list) -> dict:
+def fundamental_raw(ticker: str) -> dict:
+    tkr = finviz(ticker)
+    return tkr.ticker_fundament()
+
+
+def fundamental(ticker: str) -> str:
+    return json.dumps(fundamental_raw(ticker))
+
+
+def fundamental_converted(ticker: str):
     result = {}
-    for ticker in ticker_list:
-        tkr = finviz(ticker)
-        fundament = tkr.ticker_fundament()
-        result[ticker] = fundament
-    return result
-
-
-def fundamental(ticker_list: list) -> str:
-    return json.dumps(fundamental_raw(ticker_list))
-
-
-def fundamental_converted(ticker_list: list):
-    result = {}
-    for ticker, values in fundamental_raw(ticker_list).items():
-        converted_values = {}
-        for findus_name, params in CORE_DB_MAP.items():
-            finviz_name = params[FIELD]
-            findus_type = params[TYPE]
-            converted_value = convert_value(values[finviz_name], findus_type)
-            converted_values[findus_name] = converted_value
-            if converted_value is None:
-                if 'warnings' not in result:
-                    result['warnings'] = []
-                warn = f'{ticker}: convert {findus_name}({finviz_name}) to None from "{values[finviz_name]}"'
-                result['warnings'].append(warn)
-        result[ticker] = converted_values
+    values = fundamental_raw(ticker)
+    converted_values = {}
+    for findus_name, params in CORE_DB_MAP.items():
+        finviz_name = params[FIELD]
+        findus_type = params[TYPE]
+        converted_value = convert_value(values[finviz_name], findus_type)
+        converted_values[findus_name] = converted_value
+        if converted_value is None:
+            if 'warnings' not in result:
+                result['warnings'] = []
+            warn = f'{ticker}: convert {findus_name}({finviz_name}) to None from "{values[finviz_name]}"'
+            result['warnings'].append(warn)
+    result['values'] = converted_values
     return json.dumps(result)
 
 
 if __name__ == '__main__':
     # res = fundamental(["MSFT", "O"])
     # print(json.dumps(json.loads(res), indent=4))
-    res = fundamental_converted(["MSFT", "O"])
+    res = fundamental_converted("O")
     print(json.dumps(json.loads(res), indent=4))
