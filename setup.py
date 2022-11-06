@@ -1,8 +1,8 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='findus-edge',
-    packages=find_packages(include=['findus-edge']),
+    name='findus_edge',
+    packages=find_packages(include=['findus_edge']),
     install_requires=[
         'finvizfinance==0.14.1',
          'yfinance==0.1.84'
@@ -12,3 +12,4 @@ setup(
     author='Vadym Kovalchuk',
     license='MIT',
 )
+
