@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='findus_edge',
-    packages=find_packages(include=['findus_edge']),
+    packages=find_packages(),
     install_requires=[
         'finvizfinance==0.14.1',
          'yfinance==0.1.84'
