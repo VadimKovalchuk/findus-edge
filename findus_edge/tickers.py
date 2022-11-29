@@ -4,7 +4,7 @@ import pandas as pd
 
 LARGE_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 0, 'Symbol')
 MID_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_400_companies', 0, 'Ticker symbol')
-SMALL_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_600_companies', 1, 'Ticker symbol')
+SMALL_CAP = ('https://en.wikipedia.org/wiki/List_of_S%26P_600_companies', 1, 'Symbol')
 
 
 def getter(link: str, section: int, key: str):
