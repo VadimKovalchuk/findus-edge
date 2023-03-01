@@ -106,6 +106,7 @@ def fundamental(arg_dict: dict) -> str:
 
 
 def fundamental_converted(arg_dict: dict):
+    ticker = arg_dict['ticker']
     result = {}
     values = fundamental_raw(arg_dict)
     converted_values = {}
@@ -126,5 +127,5 @@ def fundamental_converted(arg_dict: dict):
 if __name__ == '__main__':
     # res = fundamental(["MSFT", "O"])
     # print(json.dumps(json.loads(res), indent=4))
-    res = fundamental_converted("O")
+    res = fundamental_converted({'ticker': "O"})
     print(json.dumps(json.loads(res), indent=4))
