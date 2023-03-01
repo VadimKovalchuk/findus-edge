@@ -93,18 +93,20 @@ def convert_value(raw_value: str, target_type: type) -> Union[str, int, float, N
         return type_map[target_type](raw_value)
 
 
-def fundamental_raw(ticker: str) -> dict:
+def fundamental_raw(arg_dict: dict) -> dict:
+    if 'ticker' not in arg_dict:
+        raise AttributeError('"ticker" key is missing in arguments dict')
     tkr = finviz(ticker)
     return tkr.ticker_fundament()
 
 
-def fundamental(ticker: str) -> str:
-    return json.dumps({'values': fundamental_raw(ticker)})
+def fundamental(arg_dict: dict) -> str:
+    return json.dumps({'values': fundamental_raw(arg_dict)})
 
 
-def fundamental_converted(ticker: str):
+def fundamental_converted(arg_dict: dict):
     result = {}
-    values = fundamental_raw(ticker)
+    values = fundamental_raw(arg_dict)
     converted_values = {}
     for findus_name, params in CORE_DB_MAP.items():
         finviz_name = params[FIELD]
