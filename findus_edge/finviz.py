@@ -96,6 +96,7 @@ def convert_value(raw_value: str, target_type: type) -> Union[str, int, float, N
 def fundamental_raw(arg_dict: dict) -> dict:
     if 'ticker' not in arg_dict:
         raise AttributeError('"ticker" key is missing in arguments dict')
+    ticker = arg_dict['ticker']
     tkr = finviz(ticker)
     return tkr.ticker_fundament()
 
