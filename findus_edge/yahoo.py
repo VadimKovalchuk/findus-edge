@@ -4,7 +4,7 @@ import yfinance
 
 from pandas import DataFrame
 
-START_DATE = '2017-01-01'
+START_DATE = '2023-01-01'
 
 
 def ticker_history(arg_dict: dict):
