@@ -17,9 +17,11 @@ def getter(link: str, section: int, key: str):
 
 
 def get_scope(args: dict):
-    scope = args.get('scope')
-    assert scope, 'Scope is not defined'
-    return getter(*scope)
+    scope_name = args.get('scope')
+    assert scope_name, 'Scope is not defined'
+    scope_params = SCOPES.get(scope_name)
+    assert scope_params, f'Unrecognized scope: {scope_name}'
+    return getter(*scope_params)
 
 
 def main():
