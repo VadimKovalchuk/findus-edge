@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 
 SYMBOL = 'symbol'
@@ -35,7 +37,7 @@ def zscore_norm(data):
     return zscore
 
 
-def minmax_norm(array: np.array):
+def minmax_norm(array: np.array, custom_max: Union[None, float] = None, custom_min: Union[None, float] = None):
     """
     Function to apply Min-Max scaling on the input data
 
@@ -45,13 +47,13 @@ def minmax_norm(array: np.array):
     Returns:
     numpy array: Min-Max scaled data
     """
-    min_val = np.min(array[INPUT])
-    max_val = np.max(array[INPUT])
+    min_val = custom_min if custom_min is not None else np.min(array[INPUT])
+    max_val = custom_max if custom_max is not None else np.max(array[INPUT])
     array[RESULT] = (array[INPUT] - min_val) / (max_val - min_val)
     return array
 
 
-def minmax_norm_inverted(array: np.array):
+def minmax_norm_inverted(array: np.array, custom_max: Union[None, float] = None, custom_min: Union[None, float] = None):
     """
     Function to apply Min-Max scaling on the input data
 
@@ -61,9 +63,7 @@ def minmax_norm_inverted(array: np.array):
     Returns:
     numpy array: Min-Max scaled data
     """
-    min_val = np.min(array[INPUT])
-    max_val = np.max(array[INPUT])
-    array[RESULT] = (array[INPUT] - min_val) / (max_val - min_val)
+    minmax_norm(array, custom_max, custom_min)
     array[RESULT] = 1.0 - array[RESULT]
     return array
 
@@ -103,7 +103,7 @@ def main():
         array_value = array[array[SYMBOL] == symbol][INPUT][0]
         assert value == array_value, f"{symbol}: {value} == {array_value}"
     print('pass')
-    result = minmax_norm_inverted(array)
+    result = minmax_norm_inverted(array, custom_max=80)
     print(array)
     print((np.max(array[INPUT]), np.min(array[INPUT])))
 
