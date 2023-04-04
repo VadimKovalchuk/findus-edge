@@ -1,6 +1,7 @@
 from typing import Union
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 SYMBOL = 'symbol'
 INPUT = 'input'
@@ -21,7 +22,7 @@ def convert_dict_to_array(input_dict: dict):
     return array
 
 
-def zscore_norm(data):
+def zscore_norm(array: np.array):
     """
     Function to apply Z-score normalization on the input data
 
@@ -31,13 +32,13 @@ def zscore_norm(data):
     Returns:
     numpy array: Z-score normalized data
     """
-    mean = np.mean(data)
-    std = np.std(data)
-    zscore = (data - mean) / std
-    return zscore
+    mean = np.mean(array[INPUT])
+    std = np.std(array[INPUT])
+    array[RESULT] = (array[INPUT] - mean) / std
+    return array
 
 
-def minmax_norm(array: np.array, custom_max: Union[None, float] = None, custom_min: Union[None, float] = None):
+def minmax_norm(array: np.array):
     """
     Function to apply Min-Max scaling on the input data
 
@@ -47,13 +48,13 @@ def minmax_norm(array: np.array, custom_max: Union[None, float] = None, custom_m
     Returns:
     numpy array: Min-Max scaled data
     """
-    min_val = custom_min if custom_min is not None else np.min(array[INPUT])
-    max_val = custom_max if custom_max is not None else np.max(array[INPUT])
+    min_val = np.min(array[INPUT])
+    max_val = np.max(array[INPUT])
     array[RESULT] = (array[INPUT] - min_val) / (max_val - min_val)
     return array
 
 
-def minmax_norm_inverted(array: np.array, custom_max: Union[None, float] = None, custom_min: Union[None, float] = None):
+def minmax_norm_inverted(array: np.array):
     """
     Function to apply Min-Max scaling on the input data
 
@@ -63,12 +64,12 @@ def minmax_norm_inverted(array: np.array, custom_max: Union[None, float] = None,
     Returns:
     numpy array: Min-Max scaled data
     """
-    minmax_norm(array, custom_max, custom_min)
+    minmax_norm(array)
     array[RESULT] = 1.0 - array[RESULT]
     return array
 
 
-def robust_norm(data):
+def robust_norm(array: np.array):
     """
     Function to apply Robust scaling on the input data
 
@@ -78,12 +79,12 @@ def robust_norm(data):
     Returns:
     numpy array: Robust scaled data
     """
-    median = np.median(data)
-    q1 = np.percentile(data, 25)
-    q3 = np.percentile(data, 75)
+    median = np.median(array[INPUT])
+    q1 = np.percentile(array[INPUT], 25)
+    q3 = np.percentile(array[INPUT], 75)
     iqr = q3 - q1
-    robust = (data - median) / iqr
-    return robust
+    array[RESULT] = (array[INPUT] - median) / iqr
+    return array
 
 
 def _read_input_from_csv(file_name: str):
@@ -96,6 +97,19 @@ def _read_input_from_csv(file_name: str):
     return result
 
 
+def filter_outliers_by_boundaries(array, bottom=None, top=None):
+    # if bottom is not None:
+    #     pass
+    # elif top is not None:
+    #     pass
+    # elif top is not None and bottom is not None:
+    return array[(array[INPUT] >= bottom) & (array[INPUT] <= top)]
+
+
+def plot(data):
+    plt.hist(data, bins=10)
+    plt.savefig('pic.png')
+
 def main():
     input_dict = _read_input_from_csv('pe.txt')
     array = convert_dict_to_array(input_dict)
@@ -103,9 +117,18 @@ def main():
         array_value = array[array[SYMBOL] == symbol][INPUT][0]
         assert value == array_value, f"{symbol}: {value} == {array_value}"
     print('pass')
-    result = minmax_norm_inverted(array, custom_max=80)
-    print(array)
-    print((np.max(array[INPUT]), np.min(array[INPUT])))
+    reference_scope: np.array = filter_outliers_by_boundaries(array, bottom=0, top=80)
+    minmax_norm_inverted(reference_scope)
+    #robust_norm(reference_scope)
+    #zscore_norm(reference_scope)
+    # z_scope = reference_scope.copy()
+    # z_scope[INPUT] = np.absolute(z_scope[RESULT])
+    # minmax_norm_inverted(z_scope)
+
+    plot(reference_scope[RESULT])
+    print(reference_scope[RESULT])
+    print((np.max(reference_scope[RESULT]), np.min(reference_scope[RESULT])))
+    print((np.max(reference_scope[INPUT]), np.min(reference_scope[INPUT])))
 
 
 if __name__ == '__main__':
