@@ -1,3 +1,4 @@
+import json
 from typing import Union
 
 import numpy as np
@@ -20,6 +21,11 @@ def convert_dict_to_array(input_dict: dict):
     array[SYMBOL] = symbols
     array[INPUT] = list(input_dict.values())
     return array
+
+
+def convert_array_to_dict(array: np.array):
+    result_dict = {row[SYMBOL]: row[RESULT] for row in array}
+    return result_dict
 
 
 def zscore_norm(array: np.array):
@@ -94,7 +100,7 @@ def apply_minmax_inverted(array: np.array, parameters: dict):
     Returns:
     numpy array: Min-Max scaled data
     """
-    minmax_norm(array, parameters)
+    apply_minmax(array, parameters)
     array[RESULT] = 1.0 - array[RESULT]
     return array
 
@@ -120,6 +126,13 @@ def robust_norm(array: np.array):
 calculation_func_map = {
     "minmax": calculate_minmax_parameters,
     "minmax_inverted": calculate_minmax_parameters,
+    "z_score": None,
+    "robust": None
+}
+
+apply_func_map = {
+    "minmax": apply_minmax,
+    "minmax_inverted": apply_minmax_inverted,
     "z_score": None,
     "robust": None
 }
@@ -151,17 +164,28 @@ def calculate_method_params(task_dict: dict):
     task_dict = {
         "input_data": [{"symbol": input_value},],
         "norm_method": "minmax",
-        "limits", {"top": value, "bottom": value}
         "parameters": {"method_param1_name": "method_param1_value", "method_param2_name": "param2_value"}
     }
     """
     normalization_method = task_dict['norm_method']
-    input_array = convert_dict_to_array(task_dict["input_data"])
-    limits: dict = task_dict["limits"]
-    ref_array = filter_outliers_by_boundaries(input_array, limits.get("bottom"), limits.get("top"))
-    if not task_dict.get("parameters"):
-        task_dict["parameters"] = calculation_func_map[normalization_method](ref_array)
+    array = convert_dict_to_array(task_dict["input_data"])
+    task_dict["parameters"] = calculation_func_map[normalization_method](array)
 
+
+def normalize(task_dict: dict):
+    normalization_method = task_dict['norm_method']
+    array = convert_dict_to_array(task_dict["input_data"])
+    apply_func_map[normalization_method](array, task_dict["parameters"])
+    array[RESULT] = np.round(array[RESULT], decimals=4)
+    result = convert_array_to_dict(array)
+    return result
+
+
+def normalization(task_dict: dict):
+    if not task_dict.get("parameters"):
+        calculate_method_params(task_dict)
+    result = normalize(task_dict)
+    return json.dumps(result)
 
 
 def plot(data):
@@ -170,24 +194,10 @@ def plot(data):
 
 
 def main():
-    input_dict = _read_input_from_csv('pe.txt')
-    array = convert_dict_to_array(input_dict)
-    for symbol, value in input_dict.items():
-        array_value = array[array[SYMBOL] == symbol][INPUT][0]
-        assert value == array_value, f"{symbol}: {value} == {array_value}"
-    print('pass')
-    reference_scope: np.array = filter_outliers_by_boundaries(array, bottom=0, top=80)
-    minmax_norm_inverted(reference_scope)
-    #robust_norm(reference_scope)
-    #zscore_norm(reference_scope)
-    # z_scope = reference_scope.copy()
-    # z_scope[INPUT] = np.absolute(z_scope[RESULT])
-    # minmax_norm_inverted(z_scope)
-
-    plot(reference_scope[RESULT])
-    print(reference_scope[RESULT])
-    print((np.max(reference_scope[RESULT]), np.min(reference_scope[RESULT])))
-    print((np.max(reference_scope[INPUT]), np.min(reference_scope[INPUT])))
+    task_dict = {}
+    task_dict['input_data'] = _read_input_from_csv('pe.txt')
+    task_dict['norm_method'] = 'minmax_inverted'
+    print(normalization(task_dict))
 
 
 if __name__ == '__main__':
