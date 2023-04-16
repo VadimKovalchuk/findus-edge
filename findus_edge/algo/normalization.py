@@ -2,7 +2,7 @@ import json
 from typing import Union
 
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 SYMBOL = 'symbol'
 INPUT = 'input'
@@ -188,9 +188,9 @@ def normalization(task_dict: dict):
     return json.dumps(result)
 
 
-def plot(data):
-    plt.hist(data, bins=10)
-    plt.savefig('pic.png')
+# def plot(data):
+#     plt.hist(data, bins=10)
+#     plt.savefig('pic.png')
 
 
 def main():
