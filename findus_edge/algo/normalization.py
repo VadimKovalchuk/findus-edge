@@ -1,5 +1,4 @@
 import json
-from typing import Union
 
 import numpy as np
 # import matplotlib.pyplot as plt
@@ -44,20 +43,18 @@ def zscore_norm(array: np.array):
     return array
 
 
-def minmax_norm(array: np.array):
+def calculate_zscore_parameters(array: np.array):
     """
-    Function to apply Min-Max scaling on the input data
+    Function to apply Z-score normalization on the input data
 
     Parameters:
-    array (numpy array): Input data
+    data (numpy array): Input data
 
-    Returns:
-    numpy array: Min-Max scaled data
+    Returns: {"mean": value, "std": value}
     """
-    min_val = np.min(array[INPUT])
-    max_val = np.max(array[INPUT])
-    array[RESULT] = (array[INPUT] - min_val) / (max_val - min_val)
-    return array
+    mean = np.mean(array[INPUT])
+    std = np.std(array[INPUT])
+    return {"mean": mean, "std": std}
 
 
 def calculate_minmax_parameters(array: np.array):
@@ -74,6 +71,39 @@ def calculate_minmax_parameters(array: np.array):
     return {"min": min_val, "max": max_val}
 
 
+def calculate_robust_parameters(array: np.array):
+    """
+    Function to apply Robust scaling on the input data
+
+    Parameters:
+    data (numpy array): Input data
+
+    Returns: {"median": value, "iqr": value}
+    """
+    median = np.median(array[INPUT])
+    q1 = np.percentile(array[INPUT], 25)
+    q3 = np.percentile(array[INPUT], 75)
+    iqr = q3 - q1
+    # array[RESULT] = (array[INPUT] - median) / iqr
+    return {"median": median, "iqr": iqr}
+
+
+def apply_zscore(array: np.array, parameters: dict):
+    """
+    Function to apply Z-score scaling parameters to the dataset array
+
+    Parameters:
+    parameters: {"mean": value, "std": value}
+    array (numpy array): Input data
+
+    Returns: numpy array: Z-score scaled data
+    """
+    mean = parameters["mean"]
+    std = parameters["std"]
+    array[RESULT] = (array[INPUT] - mean) / std
+    return array
+
+
 def apply_minmax(array: np.array, parameters: dict):
     """
     Function to apply Min-Max scaling parameters to the dataset array
@@ -82,7 +112,7 @@ def apply_minmax(array: np.array, parameters: dict):
     parameters: {"min": value, "max": value}
     array (numpy array): Input data
 
-    Returns: {"min": value, "max": value}
+    Returns: numpy array: Min-Max scaled data
     """
     min_val = parameters["min"]
     max_val = parameters["max"]
@@ -96,12 +126,29 @@ def apply_minmax_inverted(array: np.array, parameters: dict):
 
     Parameters:
     array (numpy array): Input data
+    parameters: {"min": value, "max": value}
 
     Returns:
     numpy array: Min-Max scaled data
     """
     apply_minmax(array, parameters)
     array[RESULT] = 1.0 - array[RESULT]
+    return array
+
+
+def apply_robust(array: np.array, parameters: dict):
+    """
+    Function to apply Robust scaling parameters to the dataset array
+
+    Parameters:
+    parameters: {"median": value, "iqr": value}
+    array (numpy array): Input data
+
+    Returns: numpy array: Robust scaled data
+    """
+    median = parameters["median"]
+    iqr = parameters["iqr"]
+    array[RESULT] = (array[INPUT] - median) / iqr
     return array
 
 
@@ -126,15 +173,15 @@ def robust_norm(array: np.array):
 calculation_func_map = {
     "minmax": calculate_minmax_parameters,
     "minmax_inverted": calculate_minmax_parameters,
-    "z_score": None,
-    "robust": None
+    "z_score": calculate_zscore_parameters,
+    "robust": calculate_robust_parameters
 }
 
 apply_func_map = {
     "minmax": apply_minmax,
     "minmax_inverted": apply_minmax_inverted,
-    "z_score": None,
-    "robust": None
+    "z_score": apply_zscore,
+    "robust": apply_robust
 }
 
 
