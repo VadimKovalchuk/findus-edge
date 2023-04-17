@@ -177,14 +177,18 @@ def normalize(task_dict: dict):
     array = convert_dict_to_array(task_dict["input_data"])
     apply_func_map[normalization_method](array, task_dict["parameters"])
     array[RESULT] = np.round(array[RESULT], decimals=4)
-    result = convert_array_to_dict(array)
-    return result
+    # result = convert_array_to_dict(array)
+    return array
 
 
 def normalization(task_dict: dict):
     if not task_dict.get("parameters"):
         calculate_method_params(task_dict)
-    result = normalize(task_dict)
+    array = normalize(task_dict)
+    result = {
+        "result": convert_array_to_dict(array),
+        "parameters": task_dict["parameters"]
+    }
     return json.dumps(result)
 
 
