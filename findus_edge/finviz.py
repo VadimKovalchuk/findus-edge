@@ -127,5 +127,6 @@ def fundamental_converted(arg_dict: dict):
 if __name__ == '__main__':
     # res = fundamental(["MSFT", "O"])
     # print(json.dumps(json.loads(res), indent=4))
-    res = fundamental_converted({'ticker': "MSFT"})
-    print(json.dumps(json.loads(res), indent=4))
+    for tkr in ["MSFT", "O", "T"]:
+        res = fundamental_converted({'ticker': tkr})
+        # print(json.dumps(json.loads(res), indent=4))
