@@ -4,8 +4,8 @@ setup(
     name='findus_edge',
     packages=find_packages(),
     install_requires=[
-        'finvizfinance==0.14.1',
-         'yfinance==0.1.84'
+        'finvizfinance==0.14.6',
+         'yfinance==0.2.28'
     ],
     version='0.0.1',
     description='Findus edge toolset',

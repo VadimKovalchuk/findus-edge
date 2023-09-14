@@ -129,4 +129,4 @@ if __name__ == '__main__':
     # print(json.dumps(json.loads(res), indent=4))
     for tkr in ["MSFT", "O", "T"]:
         res = fundamental_converted({'ticker': tkr})
-        # print(json.dumps(json.loads(res), indent=4))
+        print(json.dumps(json.loads(res), indent=4))
