@@ -4,7 +4,7 @@ setup(
     name='findus_edge',
     packages=find_packages(),
     install_requires=[
-        'finvizfinance==0.14.6',
+        'finvizfinance==0.14.7',
          'yfinance==0.2.28'
     ],
     version='0.0.1',
