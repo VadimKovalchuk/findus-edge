@@ -1,2 +1,2 @@
-finvizfinance==0.14.6
+finvizfinance==0.14.7
 yfinance==0.2.28
