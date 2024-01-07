@@ -14,7 +14,7 @@ def convert_dict_to_array(input_dict: dict):
     array = np.array(
         [
             (metric_name, metric_data[VALUE], metric_data[WEIGHT])
-            for metric_name, metric_data in input_dict.items()
+            for metric_name, metric_data in input_dict['metrics'].items()
         ],
         dtype=dt)
     return array
@@ -24,14 +24,16 @@ def weight(task_dict: dict):
     metrics_array = convert_dict_to_array(task_dict)
     weighted_values = metrics_array[VALUE] * metrics_array[WEIGHT]
     rate = np.sum(weighted_values)
-    return round(rate, 2)
+    return {'rate': round(rate, 2)}
 
 
 def main():
     test_metrics = {
-        'pe': {'value': 80, 'weight': 0.4},
-        'peg': {'value': 63, 'weight': 0.313},
-        'pb': {'value': 93, 'weight': 0.29},
+        'metrics': {
+            'pe': {'value': 80, 'weight': 0.4},
+            'peg': {'value': 63, 'weight': 0.313},
+            'pb': {'value': 93, 'weight': 0.29},
+        }
     }
     result = weight(test_metrics)
     print(result)
