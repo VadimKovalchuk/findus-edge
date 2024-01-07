@@ -24,7 +24,7 @@ def weight(task_dict: dict):
     metrics_array = convert_dict_to_array(task_dict)
     weighted_values = metrics_array[VALUE] * metrics_array[WEIGHT]
     rate = np.sum(weighted_values)
-    return {'rate': round(rate, 2)}
+    return json.dumps({"rate": round(rate, 2)})
 
 
 def main():
