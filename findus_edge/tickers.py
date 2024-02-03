@@ -13,6 +13,7 @@ def getter(link: str, section: int, key: str):
     data = pd.read_html(link)
     table = data[section]
     lst = table[key].to_list()
+    lst = list(map(lambda x: x.replace('.', '-'), lst))
     return json.dumps(lst)
 
 
